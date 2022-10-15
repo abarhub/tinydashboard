@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+<div id="app">
+    <div>{{ message }}</div>
+    <div>
+        <li v-for="item in items">
+            {{ item }}
+        </li>
+    </div>
+    <div>
+        <div v-for="item in info2">
+            <div><h2>{{ item.title }}</h2><button @click="update(item)">Update</button></div>
+        </div>
+    </div>
+    <div>
+        <button @click="test1">Test1</button>
+    </div>
+</div>
+
+<script>
+    const { createApp } = Vue
+
+    createApp({
+        data() {
+            return {
+                message: 'Hello Vue!',
+                items: [],
+                info: null,
+                info2: []
+            }
+        },
+        methods: {
+            test1(){
+                this.items.push('abc');
+                axios
+                    .get('http://localhost:8080/indicator')
+                    .then(response => {
+                        this.info = response;
+                        console.log('info',this.info,this.info.data);
+                        console.log('info2',this.info.data.indicatorDtoList);
+                        this.info2=[];
+                        if(response&&response.data&&response.data.indicatorDtoList){
+                            for(let i=0;i<response.data.indicatorDtoList.length;i++) {
+                                let tmp=response.data.indicatorDtoList[i];
+                                this.info2.push({
+                                    title:tmp.title,
+                                    id:tmp.id
+                                });
+                            }
+                        }
+                    });
+            },
+            update(item){
+                console.log('item',item,item.id);
+                axios
+                    .get('http://localhost:8080/indicator/'+item.id)
+                    .then(response => {
+                        console.log('response',response);
+                    });
+            }
+        }
+    }).mount('#app')
+</script>
+</body>
+</html>
