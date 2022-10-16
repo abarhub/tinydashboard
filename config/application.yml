@@ -1,0 +1,25 @@
+
+
+app:
+  default:
+    size: 5
+    minWidth: 16em
+    maxWidth:
+  api:
+    indicator:
+      list_posts:
+        name: Liste des posts
+        url: https://jsonplaceholder.typicode.com/posts
+        columns:
+      list_comments:
+        name: Liste des commentaires
+        url: https://jsonplaceholder.typicode.com/comments
+        columns: name,email,body
+        rowSize: 10
+      health:
+        name: Health
+        url: http://localhost:8080/actuator/health
+        type: springBootActuator
+
+
+

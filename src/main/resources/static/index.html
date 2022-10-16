@@ -3,10 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
 </head>
 <body>
 <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+
 
 <div id="app">
     <div>{{ message }}</div>
@@ -15,9 +20,65 @@
             {{ item }}
         </li>
     </div>
-    <div>
-        <div v-for="item in info2">
-            <div><h2>{{ item.title }}</h2><button @click="update(item)">Update</button></div>
+    <!-- :style="{ 'min-width': item.minwidth }" -->
+    <div class="d-flex">
+        <div v-for="item in info2" class="card" :style="{ 'min-width': minWidth }">
+            <div class="card-body" >
+                <h2 class="card-title">{{ item.title }}</h2>
+                <div>
+                    <table v-if="item.table" class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th v-for="header in item.table.headers">
+                                {{header}}
+                            </th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="row in item.table.rows">
+                            <td v-for="col in row" >
+                                {{col}}
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table v-if="item.records" class="table table-striped table-hover table-bordered">
+                        <tbody>
+                        <tr v-for="row in Object.entries(item.records)">
+                           <td>{{row[0]}}</td>
+                            <td>{{row[1]}}</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <table v-if="item.tree" class="table table-striped table-hover table-bordered">
+                        <tbody>
+                        <tr v-for="row in Object.entries(item.tree)">
+                            <td>{{row[0]}}</td>
+                            <td v-if="typeof row[1] === 'string' || row[1] instanceof String">
+                                <i class="fa-solid fa-xmark" style="color: red" v-if="row[0]==='status' && row[1]==='DOWN'"></i>
+                                <i class="fa-solid fa-check" style="color: green" v-else-if="row[0]==='status' && row[1]==='UP'"></i>
+                                <span v-else>{{row[1]}}</span>
+                            </td>
+                            <td v-if="typeof row[1] !== 'string' && !(row[1] instanceof String)">
+                                <table class="table table-striped table-hover table-bordered">
+                                    <tbody>
+                                    <tr v-for="row2 in Object.entries(row[1])">
+                                        <td>{{row2[0]}}</td>
+                                        <td>
+                                            <i class="fa-solid fa-xmark" style="color: red" v-if="row2[0]==='status' && row2[1]==='DOWN'"></i>
+                                            <i class="fa-solid fa-check" style="color: green" v-else-if="row2[0]==='status' && row2[1]==='UP'"></i>
+                                            <span v-else>{{row2[1]}}</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <button @click="update(item)">Update</button>
+            </div>
         </div>
     </div>
     <div>
@@ -34,7 +95,9 @@
                 message: 'Hello Vue!',
                 items: [],
                 info: null,
-                info2: []
+                info2: [],
+                info3: [],
+                minWidth: '18em'
             }
         },
         methods: {
@@ -64,6 +127,25 @@
                     .get('http://localhost:8080/indicator/'+item.id)
                     .then(response => {
                         console.log('response',response);
+                        let data=response.data;
+                        let trouve=null;
+                        for(let i=0;i<this.info2.length;i++){
+                            if(this.info2[i].id==item.id){
+                                trouve=this.info2[i];
+                                break;
+                            }
+                        }
+                        if(trouve!=null){
+                            if(data.table!=null) {
+                                trouve.table = data.table;
+                            }
+                            if(data.records!=null){
+                                trouve.records=data.records;
+                            }
+                            if(data.tree!=null){
+                                trouve.tree=data.tree;
+                            }
+                        }
                     });
             }
         }

@@ -1,12 +1,30 @@
+management:
+  endpoint:
+    info:
+      env:
+        enabled: true
+      enabled: true
+    health:
+      show-details: always
+      show-components: always
+
+  web.exposure.include:  health,info
 
 
-api:
-  indicator:
-    list_posts:
-      name: Liste des posts
-      url: https://jsonplaceholder.typicode.com/posts
-    list_comments:
-      name: Liste des commentaires
-      url: https://jsonplaceholder.typicode.com/comments
+  endpoints:
+    enabled-by-default: true
+
+#app:
+#  api:
+#    indicator:
+#      list_posts:
+#        name: Liste des posts
+#        url: https://jsonplaceholder.typicode.com/posts
+#        columns:
+#      list_comments:
+#        name: Liste des commentaires
+#        url: https://jsonplaceholder.typicode.com/comments
+#        columns: name,email,body
+#        rowSize: 10
 
 

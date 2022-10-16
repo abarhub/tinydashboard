@@ -3,19 +3,26 @@ package org.tinydashboard.tinydashboard.properties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Map;
-
 @Configuration
-@ConfigurationProperties(prefix = "api")
+@ConfigurationProperties(prefix = "app")
 public class AppProperties {
 
-    private Map<String,IndicatorProperties> indicator;
+    private DefaultProperties defaultConfig;
+    private ApiProperties api;
 
-    public Map<String, IndicatorProperties> getIndicator() {
-        return indicator;
+    public DefaultProperties getDefault() {
+        return defaultConfig;
     }
 
-    public void setIndicator(Map<String, IndicatorProperties> indicator) {
-        this.indicator = indicator;
+    public void setDefault(DefaultProperties defaultConfig) {
+        this.defaultConfig = defaultConfig;
+    }
+
+    public ApiProperties getApi() {
+        return api;
+    }
+
+    public void setApi(ApiProperties api) {
+        this.api = api;
     }
 }
